@@ -85,15 +85,12 @@ Steps for your recipe:
 You'll need to investigate the `tidymodels` documentation to find the appropriate step functions to use.
 
 ```{r}
-abalone <- recipe(age ~ type + longest_shell + diameter + height + 
-                    whole_weight + shucked_weight + viscera_weight + 
-                    shell_weight, data = train) %>% 
-  step_dummy(type, levels = 3) %>% 
-  step_interact(terms = ~ type_M:shucked_weight) %>%
-  step_interact(terms = ~ type_I:shucked_weight) %>% 
+abalone <- recipe(age ~ ., data = train %>% select(-rings)) %>% 
+  step_dummy(all_nominal_predictors()) %>% 
+  step_interact(terms = ~ starts_with("type"):shucked_weight) %>%
   step_interact(terms = ~ longest_shell:diameter) %>%
   step_interact(terms = ~ shucked_weight:shell_weight) %>% 
-  step_normalize()
+  step_normalize(all_predictors())
 
 ```
 
